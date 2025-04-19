@@ -16,21 +16,35 @@ const useField = (type) => {
 }
 
 const useResource = (baseUrl) => {
-  const [resources, setResources] = useState([])
+  const [resources, setResources] = useState([]);
 
-  // ...
+  useEffect(() => {
+    const fetchResources = async () => {
+      try {
+        const response = await axios.get(baseUrl);
+        setResources(response.data);
+      } catch (error) {
+        console.error("There was an error fetching the resources!", error);
+      }
+    };
 
-  const create = (resource) => {
-    // ...
-  }
+    fetchResources();
+  }, [baseUrl]); // 当 baseUrl 变化时重新获取数据
+
+  const create = async (resource) => {
+    try {
+      const response = await axios.post(baseUrl, resource);
+      setResources([...resources, response.data]);
+    } catch (error) {
+      console.error("There was an error creating the resource!", error);
+    }
+  };
 
   const service = {
-    create
-  }
+    create,
+  };
 
-  return [
-    resources, service
-  ]
+  return [resources, service];
 }
 
 const App = () => {
